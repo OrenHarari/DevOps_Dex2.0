@@ -1,7 +1,7 @@
 # DevOps dex curse Bank Hapoalim
 DevOps curse
 
-# PART 1 INSTALLATION VM
+# PART 1 INSTALLATION VM solution Part 1: VirtualBox & Ubuntu Installation
 
 ![image](https://github.com/user-attachments/assets/b105b835-2078-44a9-aace-0728ede085aa)
 
@@ -14,7 +14,7 @@ DevOps curse
 
 # Linux File Creation, and Command Usage 
 
-### PART 2 Creating Directory Structure ** SCREENSHOT FOR ALL PART 2**
+### Part 2: Linux Directory and File Creation ** SCREENSHOT FOR ALL PART 2**
 
 ```bash
 mkdir -p ~/homework/{dir1,dir2,dir3}
@@ -110,3 +110,4 @@ This command finds files modified within the last 7 days in the `homework` direc
 [Screenshot of find command for recently modified files and output]
 
 
+Part 4: Documenting the Steps at this readme.md file :) 
