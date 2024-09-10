@@ -55,7 +55,7 @@ This command searches for the word "content" in all `.txt` files in the `dir1` d
 
 - `grep`: Command for searching text using patterns
 - `*.txt`: Wildcard to match all `.txt` files
-
+**THIS SCREENSHOT FOR ALL PART 2**
 ![image](https://github.com/user-attachments/assets/ae4df146-347a-4feb-a7cc-58ffa88ac6a2)
 
 ```bash
@@ -84,6 +84,8 @@ find ~/homework -name "*.txt"
 This command finds all `.txt` files in the `homework` directory and its subdirectories.
 
 - `-name`: Allows specifying a pattern to match filenames
+
+- **THIS SCREENSHOT FOR ALL PART 3**
 
 ![image](https://github.com/user-attachments/assets/5ea03e93-e366-4eab-bf0c-6fed53320401)
 
