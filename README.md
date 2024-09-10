@@ -19,7 +19,7 @@ This command creates a directory structure with a main directory `homework` and 
 - `-p`: Creates parent directories if they don't exist
 - `{}`: Brace expansion to create multiple directories in one command
 
-[Screenshot of directory creation command and output]
+
 
 ### Creating Files
 
@@ -32,7 +32,7 @@ This command creates three empty text files in the `dir1` directory.
 - `touch`: Command to create empty files or update timestamps of existing files
 - `{}`: Brace expansion to create multiple files in one command
 
-[Screenshot of file creation command and output]
+
 
 ### Adding Content to Files
 
@@ -47,14 +47,14 @@ These commands add content to each file using the `echo` command and output redi
 - `echo`: Prints text to the terminal
 - `>`: Redirects output to a file, overwriting existing content
 
-[Screenshot of adding content to files and output]
+
 
 ## Part 3: Using grep and find Commands
 
 ### grep Command
 
 ```bash
-grep "content" ~/homework/dir1/*.txt
+grep "Harari" ~/homework/dir1/*.txt
 ```
 
 This command searches for the word "content" in all `.txt` files in the `dir1` directory.
@@ -62,7 +62,9 @@ This command searches for the word "content" in all `.txt` files in the `dir1` d
 - `grep`: Command for searching text using patterns
 - `*.txt`: Wildcard to match all `.txt` files
 
-[Screenshot of grep command and output]
+
+
+![image](https://github.com/user-attachments/assets/ae4df146-347a-4feb-a7cc-58ffa88ac6a2)
 
 ```bash
 grep -i "file1" ~/homework/dir1/*.txt
@@ -72,7 +74,7 @@ This command searches for "file1" in all `.txt` files, ignoring case.
 
 - `-i`: Makes the search case-insensitive
 
-[Screenshot of case-insensitive grep command and output]
+
 
 ### find Command
 
@@ -82,7 +84,7 @@ find ~/homework
 
 This command lists all files and directories within the `homework` directory and its subdirectories.
 
-[Screenshot of find command and output]
+
 
 ```bash
 find ~/homework -name "*.txt"
@@ -92,7 +94,8 @@ This command finds all `.txt` files in the `homework` directory and its subdirec
 
 - `-name`: Allows specifying a pattern to match filenames
 
-[Screenshot of find command for .txt files and output]
+![image](https://github.com/user-attachments/assets/5ea03e93-e366-4eab-bf0c-6fed53320401)
+
 
 ```bash
 find ~/homework -type f -mtime -7
