@@ -1,11 +1,12 @@
 # DevOps dex curse Bank Hapoalim
 DevOps curse
 
-# Linux Directory, File Creation, and Command Usage
+# Linux Directory, File Creation, and Command Usage ** SCREENSHOT FOR ALL PART 1**
+
 
 This README explains the commands used for creating directories, files, and using `grep` and `find` commands in Linux.
 
-## Part 2: Linux Directory and File Creation
+## Part 2: Linux Directory and File Creation 
 
 ### Creating Directory Structure
 
@@ -55,7 +56,10 @@ This command searches for the word "content" in all `.txt` files in the `dir1` d
 
 - `grep`: Command for searching text using patterns
 - `*.txt`: Wildcard to match all `.txt` files
+- 
 **THIS SCREENSHOT FOR ALL PART 2**
+
+  
 ![image](https://github.com/user-attachments/assets/ae4df146-347a-4feb-a7cc-58ffa88ac6a2)
 
 ```bash
