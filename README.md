@@ -1,9 +1,20 @@
 # DevOps dex curse Bank Hapoalim
 DevOps curse
 
+# PART 1 INSTALLATION VM
+
+![image](https://github.com/user-attachments/assets/b105b835-2078-44a9-aace-0728ede085aa)
+
+![image](https://github.com/user-attachments/assets/2e147a9d-5e18-45dc-a5f7-e646951cfc9c)
+
+![image](https://github.com/user-attachments/assets/2bafdc26-f439-4ce8-8a0f-67b1445f4b8e)
+
+![image](https://github.com/user-attachments/assets/ea137514-c2da-46f9-8254-69fad91e1e95)
+
+
 # Linux File Creation, and Command Usage 
 
-### Creating Directory Structure ** SCREENSHOT FOR ALL PART 2**
+### PART 2 Creating Directory Structure ** SCREENSHOT FOR ALL PART 2**
 
 ```bash
 mkdir -p ~/homework/{dir1,dir2,dir3}
