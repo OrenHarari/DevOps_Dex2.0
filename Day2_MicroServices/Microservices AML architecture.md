@@ -6,7 +6,8 @@ This document outlines a microservice architecture for an Anti-Money Laundering 
 
 ## Core Components
 
-![Untitled](https://github.com/user-attachments/assets/73b98c71-c122-4012-bebb-b94bab9645b0)
+![image](https://github.com/user-attachments/assets/a5a9a9e2-bb22-4bb1-bc2c-81257461a6e8)
+
 
 
 ### 1. API Gateway
