@@ -54,6 +54,9 @@ To build and run the Docker image:
    ```
 
 After running these commands, you can access the web page at `http://localhost:8080`.
+![image](https://github.com/user-attachments/assets/23224677-d9d3-41e4-9467-9604bcd6a524)
+
+
 
 ## Task 2: Run Multi-Container Application Using Docker Compose
 
