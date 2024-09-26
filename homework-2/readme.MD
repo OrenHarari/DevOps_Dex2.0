@@ -101,17 +101,3 @@ To verify that both containers are running:
 
 This will display a list of running containers, which should include both your Nginx web server and the Redis container.
 
-## Conclusion
-
-By following these steps, you've successfully:
-
-1. Created a Dockerfile for a simple Nginx web server.
-2. Built and run a Docker container from this Dockerfile.
-3. Created a `docker-compose.yml` file to manage a multi-container application.
-4. Run and verified the multi-container application using Docker Compose.
-
-Remember to take screenshots of:
-- The web application running at `http://localhost:8080`
-- The output of `docker ps` showing both containers running
-
-These screenshots, along with your `Dockerfile`, `docker-compose.yml`, and this explanation, should be submitted in a folder named `homework-2` in your git repository.
