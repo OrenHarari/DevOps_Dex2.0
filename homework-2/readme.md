@@ -94,6 +94,10 @@ This command starts both the web and Redis containers in detached mode.
 
 ### Step 3: Verify the Running Containers
 
+![image](https://github.com/user-attachments/assets/ecca2b8f-2d94-4b97-97ca-cd42ffda84fc)
+
+
+
 To verify that both containers are running:
 
 1. Open a terminal.
