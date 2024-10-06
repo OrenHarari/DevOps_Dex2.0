@@ -2,7 +2,7 @@ pipeline {
     agent any
     
     environment {
-        DOCKERHUB_CREDENTIALS = credentials('docker-hub-credentials')
+        DOCKERHUB_CREDENTIALS = credentials('87215f7d-8f32-4f41-9eb8-682dd27bce4')
         DOCKER_IMAGE_NAME = "orenharari33/jenkins_push_image"
         DOCKER_IMAGE_TAG = "${BUILD_NUMBER}"
     }
@@ -37,9 +37,7 @@ pipeline {
     
     post {
         always {
-            node {
-                sh 'docker logout'
-            }
+            sh 'docker logout'
         }
     }
 }
