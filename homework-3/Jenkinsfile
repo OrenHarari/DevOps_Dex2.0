@@ -1,10 +1,5 @@
 pipeline {
-    agent {
-        docker {
-            image 'docker:dind'
-            args '-v /var/run/docker.sock:/var/run/docker.sock'
-        }
-    }
+    agent any
     
     environment {
         DOCKERHUB_CREDENTIALS = credentials('docker-hub-credentials')
@@ -13,26 +8,62 @@ pipeline {
     }
     
     stages {
-        stage('Checkout and Build') {
+        stage('Checkout') {
             steps {
-                checkout scm
-                dir('homework-3') {
-                    sh "docker build -t ${DOCKER_IMAGE_NAME}:${DOCKER_IMAGE_TAG} ."
+                script {
+                    echo "Starting Checkout stage"
+                    checkout scm
+                    echo "Checkout stage completed successfully"
                 }
             }
         }
         
-        stage('Push to DockerHub') {
+        stage('Build Docker Image') {
             steps {
-                sh 'echo $DOCKERHUB_CREDENTIALS_PSW | docker login -u $DOCKERHUB_CREDENTIALS_USR --password-stdin'
-                sh "docker push ${DOCKER_IMAGE_NAME}:${DOCKER_IMAGE_TAG}"
+                script {
+                    echo "Starting Build Docker Image stage"
+                    dir('homework-3') {
+                        sh "docker build -t ${DOCKER_IMAGE_NAME}:${DOCKER_IMAGE_TAG} ."
+                    }
+                    echo "Build Docker Image stage completed successfully"
+                }
+            }
+        }
+        
+        stage('Login to DockerHub') {
+            steps {
+                script {
+                    echo "Starting Login to DockerHub stage"
+                    sh 'echo $DOCKERHUB_CREDENTIALS_PSW | docker login -u $DOCKERHUB_CREDENTIALS_USR --password-stdin'
+                    echo "Login to DockerHub stage completed successfully"
+                }
+            }
+        }
+        
+        stage('Push Docker Image') {
+            steps {
+                script {
+                    echo "Starting Push Docker Image stage"
+                    sh "docker push ${DOCKER_IMAGE_NAME}:${DOCKER_IMAGE_TAG}"
+                    echo "Push Docker Image stage completed successfully"
+                }
             }
         }
     }
     
     post {
         always {
-            sh 'docker logout'
+            script {
+                echo "Starting post-build actions"
+                sh 'docker logout'
+                echo "Docker logout completed"
+            }
+        }
+        success {
+            echo "Pipeline completed successfully"
+        }
+        failure {
+            echo "Pipeline failed"
         }
     }
 }
