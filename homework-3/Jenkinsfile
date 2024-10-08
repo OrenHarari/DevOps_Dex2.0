@@ -41,19 +41,5 @@ pipeline {
         }
     }
     
-    post {
-        always {
-            script {
-                println "Starting post-build actions"
-                sh 'docker logout'
-                println "Post-build actions completed"
-            }
-        }
-        success {
-            println "Pipeline executed successfully"
-        }
-        failure {
-            println "Pipeline execution failed"
-        }
-    }
+ 
 }
