@@ -1,5 +1,10 @@
 pipeline {
-    agent any
+    agent {
+        docker {
+            image 'docker:latest'
+            args '-v /var/run/docker.sock:/var/run/docker.sock'
+        }
+    }
     
     environment {
         DOCKERHUB_CREDENTIALS = credentials('dockerhub_login')
@@ -10,55 +15,49 @@ pipeline {
     stages {
         stage('Environment Info') {
             steps {
-                script {
-                    println "Printing environment information"
-                    sh 'env'
-                    sh 'which docker || echo "Docker not found in PATH"'
-                    sh 'id'
-                    sh 'groups'
-                    sh 'docker version || echo "Docker not accessible"'
-                }
+                sh 'echo "Docker Version:" && docker version'
+                sh 'echo "Current Directory:" && pwd'
+                sh 'echo "Directory Contents:" && ls -la'
             }
         }
         
         stage('Build') {
             steps {
-                script {
-                    println "Starting Build stage"
-                    dir('homework-3'){
-                        sh "ls -l"
-                        sh "pwd"
-                        sh 'docker build -t ${DOCKER_IMAGE_NAME}:${DOCKER_IMAGE_TAG} . || (echo "Failed to build Docker image" && exit 1)'
-                    }
-                    println "Build stage completed"
+                dir('homework-3') {
+                    sh 'echo "Building Docker Image"'
+                    sh 'docker build -t ${DOCKER_IMAGE_NAME}:${DOCKER_IMAGE_TAG} .'
+                    sh 'echo "Build Completed"'
                 }
             }
         }
         
         stage('Login to DockerHub') {
             steps {
-                script {
-                    println "Starting Login to DockerHub stage"
-                    sh 'echo $DOCKERHUB_CREDENTIALS_PSW | docker login -u $DOCKERHUB_CREDENTIALS_USR --password-stdin || (echo "Failed to login to DockerHub" && exit 1)'
-                    println "Login to DockerHub stage completed"
-                }
+                sh 'echo "Logging in to DockerHub"'
+                sh 'echo $DOCKERHUB_CREDENTIALS_PSW | docker login -u $DOCKERHUB_CREDENTIALS_USR --password-stdin'
+                sh 'echo "Login Completed"'
             }
         }
         
         stage('Push to DockerHub') {
             steps {
-                script {
-                    println "Starting Push to DockerHub stage"
-                    sh 'docker push ${DOCKER_IMAGE_NAME}:${DOCKER_IMAGE_TAG} || (echo "Failed to push Docker image" && exit 1)'
-                    println "Push to DockerHub stage completed"
-                }
+                sh 'echo "Pushing Image to DockerHub"'
+                sh 'docker push ${DOCKER_IMAGE_NAME}:${DOCKER_IMAGE_TAG}'
+                sh 'echo "Push Completed"'
             }
         }
     }
     
     post {
         always {
-            sh 'docker logout || echo "Failed to logout from DockerHub"'
+            sh 'echo "Logging out from DockerHub"'
+            sh 'docker logout'
+        }
+        success {
+            sh 'echo "Pipeline executed successfully"'
+        }
+        failure {
+            sh 'echo "Pipeline execution failed"'
         }
     }
 }
