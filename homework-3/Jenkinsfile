@@ -12,9 +12,11 @@ pipeline {
             steps {
                 script {
                     println "Starting Build stage"
-                    sh "ls -l"
-                    sh "pwd"
-                    sh 'docker build -t ${DOCKER_IMAGE_NAME}:${DOCKER_IMAGE_TAG} .'
+                    dir('homework-3'){
+                        sh "ls -l"
+                        sh "pwd"
+                        sh 'docker build -t ${DOCKER_IMAGE_NAME}:${DOCKER_IMAGE_TAG} .'
+                    }
                     println "Build stage completed"
                 }
             }
