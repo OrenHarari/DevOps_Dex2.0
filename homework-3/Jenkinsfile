@@ -8,6 +8,18 @@ pipeline {
     }
     
     stages {
+        stage('Environment Info') {
+            steps {
+                script {
+                    println "Printing environment information"
+                    sh 'env'
+                    sh 'which docker || echo "Docker not found in PATH"'
+                    sh 'id'
+                    sh 'groups'
+                }
+            }
+        }
+        
         stage('Build') {
             steps {
                 script {
@@ -15,7 +27,8 @@ pipeline {
                     dir('homework-3'){
                         sh "ls -l"
                         sh "pwd"
-                        sh 'docker build -t ${DOCKER_IMAGE_NAME}:${DOCKER_IMAGE_TAG} .'
+                        sh 'docker version || echo "Docker not installed or not accessible"'
+                        sh 'sudo docker build -t ${DOCKER_IMAGE_NAME}:${DOCKER_IMAGE_TAG} . || echo "Failed to build Docker image"'
                     }
                     println "Build stage completed"
                 }
@@ -26,7 +39,7 @@ pipeline {
             steps {
                 script {
                     println "Starting Login to DockerHub stage"
-                    sh 'echo $DOCKERHUB_CREDENTIALS_PSW | docker login -u $DOCKERHUB_CREDENTIALS_USR --password-stdin'
+                    sh 'sudo docker login -u $DOCKERHUB_CREDENTIALS_USR -p $DOCKERHUB_CREDENTIALS_PSW || echo "Failed to login to DockerHub"'
                     println "Login to DockerHub stage completed"
                 }
             }
@@ -36,12 +49,16 @@ pipeline {
             steps {
                 script {
                     println "Starting Push to DockerHub stage"
-                    sh 'docker push ${DOCKER_IMAGE_NAME}:${DOCKER_IMAGE_TAG}'
+                    sh 'sudo docker push ${DOCKER_IMAGE_NAME}:${DOCKER_IMAGE_TAG} || echo "Failed to push Docker image"'
                     println "Push to DockerHub stage completed"
                 }
             }
         }
     }
     
- 
+    post {
+        always {
+            sh 'sudo docker logout || echo "Failed to logout from DockerHub"'
+        }
+    }
 }
