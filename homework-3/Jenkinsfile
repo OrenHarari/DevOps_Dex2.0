@@ -2,32 +2,18 @@ pipeline {
     agent any
     
     environment {
-        DOCKERHUB_CREDENTIALS = credentials('docker_hub_credentials')
+        DOCKERHUB_CREDENTIALS = credentials('docker-hub-credentials')
         DOCKER_IMAGE_NAME = "orenharari33/jenkins_push_image"
         DOCKER_IMAGE_TAG = "${BUILD_NUMBER}"
     }
     
     stages {
-        stage('Checkout') {
+        stage('Build') {
             steps {
                 script {
-                    echo "Starting Checkout stage"
-                    checkout scm
-                    echo "Checkout stage completed successfully"
-                }
-            }
-        }
-        
-        stage('Build Docker Image') {
-            steps {
-                script {
-                    echo "Starting Build Docker Image stage"
-                    dir('homework-3') {
-                         // Print the current working directory inside the 'homework-3' directory
-                        echo "Working directory inside 'homework-3': ${pwd()}"
-                        sh "docker build -t ${DOCKER_IMAGE_NAME}:${DOCKER_IMAGE_TAG} ."
-                    }
-                    echo "Build Docker Image stage completed successfully"
+                    println "Starting Build stage"
+                    sh 'docker build -t ${DOCKER_IMAGE_NAME}:${DOCKER_IMAGE_TAG} .'
+                    println "Build stage completed"
                 }
             }
         }
@@ -35,19 +21,19 @@ pipeline {
         stage('Login to DockerHub') {
             steps {
                 script {
-                    echo "Starting Login to DockerHub stage"
+                    println "Starting Login to DockerHub stage"
                     sh 'echo $DOCKERHUB_CREDENTIALS_PSW | docker login -u $DOCKERHUB_CREDENTIALS_USR --password-stdin'
-                    echo "Login to DockerHub stage completed successfully"
+                    println "Login to DockerHub stage completed"
                 }
             }
         }
         
-        stage('Push Docker Image') {
+        stage('Push to DockerHub') {
             steps {
                 script {
-                    echo "Starting Push Docker Image stage"
-                    sh "docker push ${DOCKER_IMAGE_NAME}:${DOCKER_IMAGE_TAG}"
-                    echo "Push Docker Image stage completed successfully"
+                    println "Starting Push to DockerHub stage"
+                    sh 'docker push ${DOCKER_IMAGE_NAME}:${DOCKER_IMAGE_TAG}'
+                    println "Push to DockerHub stage completed"
                 }
             }
         }
@@ -56,16 +42,16 @@ pipeline {
     post {
         always {
             script {
-                echo "Starting post-build actions"
+                println "Starting post-build actions"
                 sh 'docker logout'
-                echo "Docker logout completed"
+                println "Post-build actions completed"
             }
         }
         success {
-            echo "Pipeline completed successfully"
+            println "Pipeline executed successfully"
         }
         failure {
-            echo "Pipeline failed"
+            println "Pipeline execution failed"
         }
     }
 }
