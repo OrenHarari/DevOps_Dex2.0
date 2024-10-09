@@ -1,63 +1,35 @@
 pipeline {
-    agent {
-        docker {
-            image 'docker:latest'
-            args '-v /var/run/docker.sock:/var/run/docker.sock'
-        }
-    }
+    agent any
     
     environment {
-        DOCKERHUB_CREDENTIALS = credentials('dockerhub_login')
-        DOCKER_IMAGE_NAME = "orenharari33/jenkins_push_image"
-        DOCKER_IMAGE_TAG = "${BUILD_NUMBER}"
-    }
+        DOCKERHUB_CREDENTIALS = credentials('docker-hub-credentials')
+        image = ''
+    } 
     
     stages {
-        stage('Environment Info') {
+        stage('Clone Docker example') {
             steps {
-                sh 'echo "Docker Version:" && docker version'
-                sh 'echo "Current Directory:" && pwd'
-                sh 'echo "Directory Contents:" && ls -la'
+                git([url:'https://github.com/OrenHarari/DevOps_Dex2.0.git', branch: 'main'])    
             }
         }
         
         stage('Build') {
             steps {
-                dir('homework-3') {
-                    sh 'echo "Building Docker Image"'
-                    sh 'docker build -t ${DOCKER_IMAGE_NAME}:${DOCKER_IMAGE_TAG} .'
-                    sh 'echo "Build Completed"'
+                script {
+                    image = docker.build "rimonalonzo/my-image:${env.BUILD_ID}"    
                 }
+                
             }
         }
         
-        stage('Login to DockerHub') {
-            steps {
-                sh 'echo "Logging in to DockerHub"'
-                sh 'echo $DOCKERHUB_CREDENTIALS_PSW | docker login -u $DOCKERHUB_CREDENTIALS_USR --password-stdin'
-                sh 'echo "Login Completed"'
+        stage('Deploy our image') { 
+            steps { 
+                script { 
+                    docker.withRegistry( '', "docker-hub-credentials") { 
+                        image.push() 
+                    }
+                } 
             }
-        }
-        
-        stage('Push to DockerHub') {
-            steps {
-                sh 'echo "Pushing Image to DockerHub"'
-                sh 'docker push ${DOCKER_IMAGE_NAME}:${DOCKER_IMAGE_TAG}'
-                sh 'echo "Push Completed"'
-            }
-        }
-    }
-    
-    post {
-        always {
-            sh 'echo "Logging out from DockerHub"'
-            sh 'docker logout'
-        }
-        success {
-            sh 'echo "Pipeline executed successfully"'
-        }
-        failure {
-            sh 'echo "Pipeline execution failed"'
-        }
+        } 
     }
 }
