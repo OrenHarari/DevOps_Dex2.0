@@ -1,11 +1,12 @@
 pipeline {
-    agent any
+    agent {
+        label 'linux'  // This line specifies that the agent must be a Linux machine
+    }
 
     environment {
         DOCKER_IMAGE = "orenharari33/jenkins_push_image"
         DOCKER_TAG = "latest"
-        DOCKERHUB_CREDENTIALS = credentials('orenharari33-dockerhub') // You need to set up these credentials in Jenkins
-        GITHUB_CREDENTIALS = credentials('orenharari33-dockerhub') // You need to set up these credentials in Jenkins
+        DOCKERHUB_CREDENTIALS = credentials('orenharari33-dockerhub')
     }
 
     stages {
@@ -17,61 +18,22 @@ pipeline {
 
         stage('Build Docker Image') {
             steps {
-                script {
-                    docker.build("${DOCKER_IMAGE}:${DOCKER_TAG}")
-                }
-            }
-        }
-
-        stage('Run Tests') {
-            steps {
-                script {
-                    // Replace this with your actual test commands
-                    sh 'echo "Running tests..."'
-                    // Example: sh 'docker run --rm ${DOCKER_IMAGE}:${DOCKER_TAG} npm test'
-                }
+                sh "docker build -t ${DOCKER_IMAGE}:${DOCKER_TAG} ."
             }
         }
 
         stage('Push to DockerHub') {
             steps {
-                script {
-                    docker.withRegistry('https://index.docker.io/v1/', 'dockerhub-credentials') {
-                        docker.image("${DOCKER_IMAGE}:${DOCKER_TAG}").push()
-                    }
-                }
-            }
-        }
-
-        stage('Deploy') {
-            steps {
-                script {
-                    // Replace this with your actual deployment commands
-                    sh 'echo "Deploying to production..."'
-                    // Example: sh 'kubectl apply -f kubernetes-manifests/'
-                }
-            }
-        }
-
-        stage('Clean Up') {
-            steps {
-                script {
-                    sh "docker rmi ${DOCKER_IMAGE}:${DOCKER_TAG}"
-                }
+                sh "echo $DOCKERHUB_CREDENTIALS_PSW | docker login -u $DOCKERHUB_CREDENTIALS_USR --password-stdin"
+                sh "docker push ${DOCKER_IMAGE}:${DOCKER_TAG}"
             }
         }
     }
 
     post {
-        success {
-            echo 'Pipeline succeeded! The image has been built, tested, pushed, and deployed.'
-        }
-        failure {
-            echo 'Pipeline failed. Please check the logs for details.'
-        }
         always {
-            // Clean up workspace
-            cleanWs()
+            sh "docker logout"
         }
-    }
-}
+        success {
+            echo 'Successfully built and pushed Docker image'
+        }
