@@ -1,6 +1,6 @@
 pipeline {
     agent {
-        label 'linux'  // This line specifies that the agent must be a Linux machine
+        label 'linux'
     }
 
     environment {
@@ -37,3 +37,8 @@ pipeline {
         success {
             echo 'Successfully built and pushed Docker image'
         }
+        failure {
+            echo 'Failed to build or push Docker image'
+        }
+    }
+}
