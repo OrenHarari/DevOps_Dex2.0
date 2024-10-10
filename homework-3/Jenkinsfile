@@ -5,6 +5,7 @@ pipeline {
         DOCKER_IMAGE = "orenharari33/jenkins_push_image"
         DOCKER_TAG = "latest"
         DOCKERHUB_CREDENTIALS = credentials('orenharari33-dockerhub')
+        DOCKER_HOST = 'unix:///var/run/docker.sock'
     }
 
     stages {
@@ -20,19 +21,18 @@ pipeline {
                 sh 'echo "Jenkins Home: $JENKINS_HOME"'
                 sh 'whoami'
                 sh 'id'
-                sh 'which docker || echo "Docker not found in PATH"'
-                sh 'echo $PATH'
+                sh 'ls -l /var/run/docker.sock || echo "Docker socket not found at /var/run/docker.sock"'
             }
         }
 
         stage('Check Docker') {
             steps {
                 script {
-                    def dockerCheck = sh(script: 'which docker', returnStatus: true)
+                    def dockerCheck = sh(script: 'docker version', returnStatus: true)
                     if (dockerCheck != 0) {
-                        error "Docker is not installed or not in PATH"
+                        error "Unable to connect to Docker. Ensure the Docker socket is mounted and accessible."
                     } else {
-                        sh 'docker --version'
+                        sh 'docker version'
                         sh 'docker info'
                     }
                 }
@@ -68,14 +68,7 @@ pipeline {
 
     post {
         always {
-            script {
-                def dockerCheck = sh(script: 'which docker', returnStatus: true)
-                if (dockerCheck == 0) {
-                    sh "docker logout"
-                } else {
-                    echo "Docker not found, skipping logout"
-                }
-            }
+            sh "docker logout"
         }
         success {
             echo 'Successfully built and pushed Docker image'
