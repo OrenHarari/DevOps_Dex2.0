@@ -14,10 +14,28 @@ pipeline {
             }
         }
 
+        stage('Environment Diagnostics') {
+            steps {
+                sh 'echo "Workspace: $WORKSPACE"'
+                sh 'echo "Jenkins Home: $JENKINS_HOME"'
+                sh 'whoami'
+                sh 'id'
+                sh 'which docker || echo "Docker not found in PATH"'
+                sh 'echo $PATH'
+            }
+        }
+
         stage('Check Docker') {
             steps {
-                sh 'docker --version'
-                sh 'docker info'
+                script {
+                    def dockerCheck = sh(script: 'which docker', returnStatus: true)
+                    if (dockerCheck != 0) {
+                        error "Docker is not installed or not in PATH"
+                    } else {
+                        sh 'docker --version'
+                        sh 'docker info'
+                    }
+                }
             }
         }
 
@@ -50,7 +68,14 @@ pipeline {
 
     post {
         always {
-            sh "docker logout"
+            script {
+                def dockerCheck = sh(script: 'which docker', returnStatus: true)
+                if (dockerCheck == 0) {
+                    sh "docker logout"
+                } else {
+                    echo "Docker not found, skipping logout"
+                }
+            }
         }
         success {
             echo 'Successfully built and pushed Docker image'
