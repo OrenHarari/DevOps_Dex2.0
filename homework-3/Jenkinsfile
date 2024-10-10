@@ -5,7 +5,6 @@ pipeline {
         DOCKER_IMAGE = "orenharari33/jenkins_push_image"
         DOCKER_TAG = "latest"
         DOCKERHUB_CREDENTIALS = credentials('orenharari33-dockerhub')
-        DOCKER_HOST = 'unix:///var/run/docker.sock'
     }
 
     stages {
@@ -15,43 +14,29 @@ pipeline {
             }
         }
 
-        stage('Environment Diagnostics') {
-            steps {
-                sh 'echo "Workspace: $WORKSPACE"'
-                sh 'echo "Jenkins Home: $JENKINS_HOME"'
-                sh 'whoami'
-                sh 'id'
-                sh 'ls -l /var/run/docker.sock || echo "Docker socket not found at /var/run/docker.sock"'
-            }
-        }
-
         stage('Check Docker') {
             steps {
                 script {
-                    def dockerCheck = sh(script: 'docker version', returnStatus: true)
-                    if (dockerCheck != 0) {
-                        error "Unable to connect to Docker. Ensure the Docker socket is mounted and accessible."
-                    } else {
-                        sh 'docker version'
+                    try {
+                        sh 'docker --version'
                         sh 'docker info'
+                        echo "Docker is available and configured correctly"
+                    } catch (Exception e) {
+                        error "Docker is not available or not configured correctly: ${e.message}"
                     }
                 }
-            }
-        }
-
-        stage('Debug Path') {
-            steps {
-                sh 'pwd'
-                sh 'ls -la'
             }
         }
 
         stage('Build Docker Image') {
             steps {
                 script {
-                    sh 'pwd'
-                    sh 'ls -la'
-                    sh "docker build -t ${DOCKER_IMAGE}:${DOCKER_TAG} ."
+                    try {
+                        sh "docker build -t ${DOCKER_IMAGE}:${DOCKER_TAG} ."
+                        echo "Docker image built successfully"
+                    } catch (Exception e) {
+                        error "Failed to build Docker image: ${e.message}"
+                    }
                 }
             }
         }
@@ -59,8 +44,13 @@ pipeline {
         stage('Push to DockerHub') {
             steps {
                 script {
-                    sh "echo $DOCKERHUB_CREDENTIALS_PSW | docker login -u $DOCKERHUB_CREDENTIALS_USR --password-stdin"
-                    sh "docker push ${DOCKER_IMAGE}:${DOCKER_TAG}"
+                    try {
+                        sh "echo $DOCKERHUB_CREDENTIALS_PSW | docker login -u $DOCKERHUB_CREDENTIALS_USR --password-stdin"
+                        sh "docker push ${DOCKER_IMAGE}:${DOCKER_TAG}"
+                        echo "Docker image pushed to DockerHub successfully"
+                    } catch (Exception e) {
+                        error "Failed to push Docker image to DockerHub: ${e.message}"
+                    }
                 }
             }
         }
