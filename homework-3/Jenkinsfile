@@ -1,5 +1,10 @@
 pipeline {
-    agent any  // This line allows the job to run on any available agent
+    agent {
+        docker {
+            image 'docker:dind'
+            args '-v /var/run/docker.sock:/var/run/docker.sock -v /home/jenkins:/home/jenkins'
+        }
+    }
 
     environment {
         DOCKER_IMAGE = "orenharari33/jenkins_push_image"
@@ -16,7 +21,9 @@ pipeline {
 
         stage('Build Docker Image') {
             steps {
-                sh "docker build -t ${DOCKER_IMAGE}:${DOCKER_TAG} ."
+                dir('/home/jenkins/workspace/DevOps_Dex2.0/homework-3') {
+                    sh "docker build -t ${DOCKER_IMAGE}:${DOCKER_TAG} ."
+                }
             }
         }
 
