@@ -8,63 +8,20 @@ pipeline {
     }
 
     stages {
-        stage('Checkout') {
-            steps {
-                checkout scm
-            }
-        }
-
-        stage('Check Docker') {
+        stage('Initial Run') {
             steps {
                 script {
-                    try {
-                        sh 'docker --version'
-                        sh 'docker info'
-                        echo "Docker is available and configured correctly"
-                    } catch (Exception e) {
-                        error "Docker is not available or not configured correctly: ${e.message}"
-                    }
-                }
-            }
-        }
-
-        stage('Build Docker Image') {
-            steps {
-                script {
-                    try {
-                        sh "docker build -t ${DOCKER_IMAGE}:${DOCKER_TAG} ."
-                        echo "Docker image built successfully"
-                    } catch (Exception e) {
-                        error "Failed to build Docker image: ${e.message}"
-                    }
-                }
-            }
-        }
-
-        stage('Push to DockerHub') {
-            steps {
-                script {
-                    try {
-                        sh "echo $DOCKERHUB_CREDENTIALS_PSW | docker login -u $DOCKERHUB_CREDENTIALS_USR --password-stdin"
-                        sh "docker push ${DOCKER_IMAGE}:${DOCKER_TAG}"
-                        echo "Docker image pushed to DockerHub successfully"
-                    } catch (Exception e) {
-                        error "Failed to push Docker image to DockerHub: ${e.message}"
-                    }
+                    echo "Starting the pipeline..."
+                    echo "Docker image: ${DOCKER_IMAGE}:${DOCKER_TAG}"
+                    echo "Jenkins is running successfully!"
                 }
             }
         }
     }
 
     post {
-        always {
-            sh "docker logout"
-        }
         success {
-            echo 'Successfully built and pushed Docker image'
-        }
-        failure {
-            echo 'Failed to build or push Docker image'
+            echo "Pipeline executed successfully!"
         }
     }
 }
