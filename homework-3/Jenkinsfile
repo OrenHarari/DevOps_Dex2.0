@@ -2,7 +2,7 @@ pipeline {
     agent any
 
     environment {
-        DOCKER_IMAGE = "orenharari33/jenkins_push_image"
+        DOCKER_IMAGE = "orenharari33/getting-started"
         DOCKER_TAG = "latest"
         DOCKERHUB_CREDENTIALS = credentials('orenharari33-dockerhub')
     }
@@ -20,11 +20,11 @@ pipeline {
             }
         }
 
-        stage('Build Docker Image') {
+        stage('Pull Docker Image') {
             steps {
                 script {
                     docker.image('docker:dind').inside('-v /var/run/docker.sock:/var/run/docker.sock') {
-                        sh "docker build -t ${DOCKER_IMAGE}:${DOCKER_TAG} ."
+                        sh "docker pull ${DOCKER_IMAGE}:${DOCKER_TAG}"
                     }
                 }
             }
@@ -53,10 +53,10 @@ pipeline {
             }
         }
         success {
-            echo "Successfully built and pushed Docker image to DockerHub"
+            echo "Successfully pulled and pushed Docker image to DockerHub"
         }
         failure {
-            echo "Failed to build or push Docker image"
+            echo "Failed to pull or push Docker image"
         }
     }
 }
